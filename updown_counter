@@ -1,0 +1,66 @@
+module updown_counter(clock, updown, reset, preset, count);
+  //PARAMETERS
+  parameter WIDTH = 4;
+  
+  //inputs
+  input logic clock;
+  input logic reset;
+  input logic preset;
+  input logic updown;
+  
+  //outputs
+  output logic [WIDTH-1:0] count;
+  
+  initial begin 
+    count <= 0;
+  end
+  
+  always @ (posedge clock) begin
+    if(reset) count <= 0;
+    else if(preset) count <= (2<<WIDTH-1)-1;
+    else begin
+      case(updown)
+        1'b 0 : begin count <= count - 1; end
+        1'b 1 : begin count <= count + 1; end
+        default : begin count <= count + 1; end
+      endcase
+    end
+   end
+endmodule : updown_counter
+
+//TESTBENCH CODE
+module updown_countertest;
+  parameter WIDTH = 4;
+  
+  logic clock_tb;
+  logic reset_tb;
+  logic preset_tb;
+  logic updown_tb;
+  logic [WIDTH-1:0] count_tb;
+  
+  updown_counter dut(.clock(clock_tb), .reset(reset_tb), .preset(preset_tb), .updown(updown_tb), .count(count_tb));
+  
+  initial begin
+    $dumpfile("test.vcd");
+    $dumpvars(1,updown_countertest);
+    clock_tb = 0;
+    reset_tb = 0;
+    preset_tb = 0;
+    updown_tb = 1;
+  end
+  
+  always #15 clock_tb = ~clock_tb;
+  
+  initial begin
+    #20 reset_tb = 0;
+    #30 reset_tb = 1;
+    #30 reset_tb = 0;
+    #30 updown_tb = ~updown_tb;
+    #120 preset_tb = 1;
+    #30 preset_tb = 0;
+  end
+  
+  initial
+    #500 $finish;
+
+endmodule : updown_countertest
