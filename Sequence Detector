@@ -1,0 +1,141 @@
+interface seq_interface (clock);
+  input logic clock;
+  logic seq_in; 
+  logic detect_out; 
+  logic reset;
+
+  modport DUT(input seq_in, reset, clock, output detect_out);
+  modport TEST(input detect_out, clock, output seq_in, reset);
+endinterface : seq_interface
+
+module seq_detector(seq_interface.DUT detector_interface); //detects "1011"
+ 
+  //Parameters
+  parameter S0 = 0;
+  parameter S1 = 1;
+  parameter S2 = 2;
+  parameter S3 = 3;
+  parameter S4 = 4;
+  
+  logic [2:0] current_state,next_state;
+  
+  initial current_state = 0;
+  always@(posedge detector_interface.clock, negedge detector_interface.reset) begin
+    if(detector_interface.reset == 0) current_state <= S0;
+    else current_state <= next_state;
+  end
+  
+  //Combinational logic to determine next state based on current state
+  always_comb begin
+    case(current_state)
+      S0: begin
+        if(detector_interface.seq_in) next_state <= S1;
+        else next_state <= S0;
+      end
+      S1: begin
+        if(!detector_interface.seq_in) next_state <= S2;
+        else next_state <= S1;
+      end
+      S2: begin
+        if(detector_interface.seq_in) next_state <= S3;
+        else next_state <= S0;
+      end
+      S3: begin
+        if(detector_interface.seq_in) next_state <= S4;
+        else next_state <= S2;
+      end
+      S4: begin
+        if(detector_interface.seq_in) next_state <= S0;
+        else next_state <= S0;
+      end
+      default: next_state <= S0;
+    endcase
+  end
+  
+  //block to assign output value
+  always @(current_state) begin
+    case(current_state)
+      S0: detector_interface.detect_out <= 0;
+      S1: detector_interface.detect_out <= 0;
+      S2: detector_interface.detect_out <= 0;
+      S3: detector_interface.detect_out <= 0;
+      S4: detector_interface.detect_out <= 1;
+      default: detector_interface.detect_out <= 0;
+    endcase
+  end
+  
+endmodule : seq_detector
+
+// TEST BENCH - Generates random string of 1s and 0s and checks if detection is right or not
+program seqdetector_tb(seq_interface.TEST detector_interface);
+  bit in_queue[$];
+  
+  initial begin
+    initialize();
+    #10;
+    detector_interface.reset = 1;
+    #10;
+    
+    fork
+      seq_generator($urandom_range(100,200));
+      seq_checker();
+    join_any
+    $finish();
+  end
+  
+  task initialize();
+    detector_interface.reset = 0;
+    detector_interface.seq_in = 0;
+  endtask : initialize
+  
+  task seq_generator(input int length = 5);
+    bit dyn_array[];
+    dyn_array = new[length];
+    foreach(dyn_array[i]) dyn_array[i] = $random();
+    
+    foreach(dyn_array[i]) begin
+      @(negedge detector_interface.clock);
+      detector_interface.seq_in = dyn_array[i];
+      in_queue.push_back(dyn_array[i]);
+      $write("%b ",detector_interface.seq_in);
+    end
+  endtask : seq_generator
+  
+  task seq_checker();
+    bit latest_bit;
+    bit overlap_bit;
+    bit [3:0] seq_data;
+    forever begin
+      @(negedge seq_interface.clock);
+      if(in_queue.size()) begin
+        latest_bit = in_queue.pop_back();
+        overlap_bit = seq_data[3]; //bit to check overlap
+        seq_data = {seq_data,latest_bit};
+        if(seq_data == 4'b1011) begin //sequence to be detected
+          if(seq_interface.detect_out == 1) $display("TRUE");
+          else if(!overlap_bit) $display("ERROR: FALSE NEGATIVE");
+        end
+        else if(seq_interface.detect_out == 1)
+          $display("ERROR: FALSE POSITIVE");
+      end
+    end
+  endtask : seq_checker
+endprogram : seqdetector_tb
+
+module tb_top();
+  bit clock;
+  initial begin
+    clock = 0;
+    forever #10 clock = ~clock;
+  end 
+  
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0,tb_top);
+  end
+  
+  seq_interface detector_interface_i(clock);
+  seqdetector_tb tb (detector_interface_i);
+  seq_detector dut(detector_interface_i);
+  
+endmodule : tb_top 
