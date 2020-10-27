@@ -1,4 +1,4 @@
-nterface addrsub_interface;
+interface addrsub_interface;
   logic func; //to perform subtraction or addition
   logic in1; //input 1
   logic in2; //input 2
