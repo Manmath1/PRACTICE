@@ -1,0 +1,39 @@
+module booth_multiplier(prod, busy, mc, mp, clk, start);
+output [31:0] prod;
+output busy;
+input [15:0] mc, mp
+;input clk, start;
+reg [15:0] A, Q, M;
+reg Q_1;
+reg [4:0] count;
+wire [15:0] sum, difference;
+always @(posedge clk)begin
+	if (start) begin
+		A <= 16'b0;      
+		M <= mc;
+		Q <= mp;
+		Q_1 <= 1'b0;
+      count <= 5'b0;
+	end
+	else begin
+		case ({Q[0], Q_1})
+			2'b0_1 : {A, Q, Q_1} <= {sum[15], sum, Q};
+			2'b1_0 : {A, Q, Q_1} <= {difference[15], difference, Q};
+			default: {A, Q, Q_1} <= {A[15], A, Q};
+		endcase
+		count <= count + 1'b1;
+	end
+end
+alu adder (sum, A, M, 1'b0);
+alu subtracter (difference, A, ~M, 1'b1);
+assign prod = {A,Q};
+assign busy = (count < 16);
+endmodule
+
+module alu(out, a, b, cin);
+output [15:0] out;
+input [15:0] a;
+input [15:0] b;
+input cin;
+assign out = a + b + cin;
+endmodule
