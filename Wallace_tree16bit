@@ -1,0 +1,336 @@
+module wallace_tree_multiplier(
+input [15:0]A,B,
+output [31:0]PRODUCT
+    );
+    reg PP[15:0][15:0]; //2D Array to store Partial Products
+    integer i,j; 
+    always@(A,B)begin
+        for(i=0;i<16;i=i+1)
+            for(j=0;j<16;j=j+1)
+                PP[i][j] <= B[j]&A[i];
+				
+    end
+    //stage 1
+    HA ha_11p1(PP[0][1],PP[1][0],s11p1,c11p1);
+    FA fa_12p1(PP[0][2],PP[1][1],PP[2][0],s12p1,c12p1);
+    FA fa_13p1(PP[0][3],PP[1][2],PP[2][1],s13p1,c13p1);
+    FA fa_14p1(PP[0][4],PP[1][3],PP[2][2],s14p1,c14p1);
+    FA fa_15p1(PP[0][5],PP[1][4],PP[2][3],s15p1,c15p1);
+    FA fa_16p1(PP[0][6],PP[1][5],PP[2][4],s16p1,c16p1);
+    FA fa_17p1(PP[0][7],PP[1][6],PP[2][5],s17p1,c17p1);
+    FA fa_18p1(PP[0][8],PP[1][7],PP[2][6],s18p1,c18p1);
+    FA fa_19p1(PP[0][9],PP[1][8],PP[2][7],s19p1,c19p1);
+    FA fa_110p1(PP[0][10],PP[1][9],PP[2][8],s110p1,c110p1);
+    FA fa_111p1(PP[0][11],PP[1][10],PP[2][9],s111p1,c111p1);
+    FA fa_112p1(PP[0][12],PP[1][11],PP[2][10],s112p1,c112p1);
+    FA fa_113p1(PP[0][13],PP[1][12],PP[2][11],s113p1,c113p1);
+    FA fa_114p1(PP[0][14],PP[1][13],PP[2][12],s114p1,c114p1);
+    FA fa_115p1(PP[0][15],PP[1][14],PP[2][13],s115p1,c115p1);
+    HA ha_116p1(PP[1][15],PP[2][14],s116p1,c116p1);
+    
+    HA ha_11p2(PP[3][1],PP[4][0],s11p2,c11p2);
+    FA fa_12p2(PP[3][2],PP[4][1],PP[5][0],s12p2,c12p2);
+    FA fa_13p2(PP[3][3],PP[4][2],PP[5][1],s13p2,c13p2);
+    FA fa_14p2(PP[3][4],PP[4][3],PP[5][2],s14p2,c14p2);
+    FA fa_15p2(PP[3][5],PP[4][4],PP[5][3],s15p2,c15p2);
+    FA fa_16p2(PP[3][6],PP[4][5],PP[5][4],s16p2,c16p2);
+    FA fa_17p2(PP[3][7],PP[4][6],PP[5][5],s17p2,c17p2);
+    FA fa_18p2(PP[3][8],PP[4][7],PP[5][6],s18p2,c18p2);
+    FA fa_19p2(PP[3][9],PP[4][8],PP[5][7],s19p2,c19p2);
+    FA fa_110p2(PP[3][10],PP[4][9],PP[5][8],s110p2,c110p2);
+    FA fa_111p2(PP[3][11],PP[4][10],PP[5][9],s111p2,c111p2);
+    FA fa_112p2(PP[3][12],PP[4][11],PP[5][10],s112p2,c112p2);
+    FA fa_113p2(PP[3][13],PP[4][12],PP[5][11],s113p2,c113p2);
+    FA fa_114p2(PP[3][14],PP[4][13],PP[5][12],s114p2,c114p2);
+    FA fa_115p2(PP[3][15],PP[4][14],PP[5][13],s115p2,c115p2);
+    HA ha_116p2(PP[4][15],PP[5][14],s116p2,c116p2);
+    
+    HA ha_11p3(PP[6][1],PP[7][0],s11p3,c11p3);
+    FA fa_12p3(PP[6][2],PP[7][1],PP[8][0],s12p3,c12p3);
+    FA fa_13p3(PP[6][3],PP[7][2],PP[8][1],s13p3,c13p3);
+    FA fa_14p3(PP[6][4],PP[7][3],PP[8][2],s14p3,c14p3);
+    FA fa_15p3(PP[6][5],PP[7][4],PP[8][3],s15p3,c15p3);
+    FA fa_16p3(PP[6][6],PP[7][5],PP[8][4],s16p3,c16p3);
+    FA fa_17p3(PP[6][7],PP[7][6],PP[8][5],s17p3,c17p3);
+    FA fa_18p3(PP[6][8],PP[7][7],PP[8][6],s18p3,c18p3);
+    FA fa_19p3(PP[6][9],PP[7][8],PP[8][7],s19p3,c19p3);
+    FA fa_110p3(PP[6][10],PP[7][9],PP[8][8],s110p3,c110p3);
+    FA fa_111p3(PP[6][11],PP[7][10],PP[8][9],s111p3,c111p3);
+    FA fa_112p3(PP[6][12],PP[7][11],PP[8][10],s112p3,c112p3);
+    FA fa_113p3(PP[6][13],PP[7][12],PP[8][11],s113p3,c113p3);
+    FA fa_114p3(PP[6][14],PP[7][13],PP[8][12],s114p3,c114p3);
+    FA fa_115p3(PP[6][15],PP[7][14],PP[8][13],s115p3,c115p3);
+    HA ha_116p3(PP[7][15],PP[8][14],s116p3,c116p3);
+    
+    HA ha_11p4(PP[9][1],PP[10][0],s11p4,c11p4);
+    FA fa_12p4(PP[9][2],PP[10][1],PP[11][0],s12p4,c12p4);
+    FA fa_13p4(PP[9][3],PP[10][2],PP[11][1],s13p4,c13p4);
+    FA fa_14p4(PP[9][4],PP[10][3],PP[11][2],s14p4,c14p4);
+    FA fa_15p4(PP[9][5],PP[10][4],PP[11][3],s15p4,c15p4);
+    FA fa_16p4(PP[9][6],PP[10][5],PP[11][4],s16p4,c16p4);
+    FA fa_17p4(PP[9][7],PP[10][6],PP[11][5],s17p4,c17p4);
+    FA fa_18p4(PP[9][8],PP[10][7],PP[11][6],s18p4,c18p4);
+    FA fa_19p4(PP[9][9],PP[10][8],PP[11][7],s19p4,c19p4);
+    FA fa_110p4(PP[9][10],PP[10][9],PP[11][8],s110p4,c110p4);
+    FA fa_111p4(PP[9][11],PP[10][10],PP[11][9],s111p4,c111p4);
+    FA fa_112p4(PP[9][12],PP[10][11],PP[11][10],s112p4,c112p4);
+    FA fa_113p4(PP[9][13],PP[10][12],PP[11][11],s113p4,c113p4);
+    FA fa_114p4(PP[9][14],PP[10][13],PP[11][12],s114p4,c114p4);
+    FA fa_115p4(PP[9][15],PP[10][14],PP[11][13],s115p4,c115p4);
+    HA ha_116p4(PP[10][15],PP[11][14],s116p4,c116p4);
+    
+    HA ha_11p5(PP[12][1],PP[13][0],s11p5,c11p5);
+    FA fa_12p5(PP[12][2],PP[13][1],PP[14][0],s12p5,c12p5);
+    FA fa_13p5(PP[12][3],PP[13][2],PP[14][1],s13p5,c13p5);
+    FA fa_14p5(PP[12][4],PP[13][3],PP[14][2],s14p5,c14p5);
+    FA fa_15p5(PP[12][5],PP[13][4],PP[14][3],s15p5,c15p5);
+    FA fa_16p5(PP[12][6],PP[13][5],PP[14][4],s16p5,c16p5);
+    FA fa_17p5(PP[12][7],PP[13][6],PP[14][5],s17p5,c17p5);
+    FA fa_18p5(PP[12][8],PP[13][7],PP[14][6],s18p5,c18p5);
+    FA fa_19p5(PP[12][9],PP[13][8],PP[14][7],s19p5,c19p5);
+    FA fa_110p5(PP[12][10],PP[13][9],PP[14][8],s110p5,c110p5);
+    FA fa_111p5(PP[12][11],PP[13][10],PP[14][9],s111p5,c111p5);
+    FA fa_112p5(PP[12][12],PP[13][11],PP[14][10],s112p5,c112p5);
+    FA fa_113p5(PP[12][13],PP[13][12],PP[14][11],s113p5,c113p5);
+    FA fa_114p5(PP[12][14],PP[13][13],PP[14][12],s114p5,c114p5);
+    FA fa_115p5(PP[12][15],PP[13][14],PP[14][13],s115p5,c115p5);
+    HA ha_116p5(PP[13][15],PP[14][14],s116p5,c116p5);
+    
+    //stage 2
+    HA ha_21p1(s12p1,c11p1,s21p1,c21p1);
+    FA fa_22p1(s13p1,c12p1,PP[3][0],s22p1,c22p1);
+    FA fa_23p1(s14p1,c13p1,s11p2,s23p1,c23p1);
+    FA fa_24p1(s15p1,c14p1,s12p2,s24p1,c24p1);
+    FA fa_25p1(s16p1,c15p1,s13p2,s25p1,c25p1);
+    FA fa_26p1(s17p1,c16p1,s14p2,s26p1,c26p1);
+    FA fa_27p1(s18p1,c17p1,s15p2,s27p1,c27p1);
+    FA fa_28p1(s19p1,c18p1,s16p2,s28p1,c28p1);
+    FA fa_29p1(s110p1,c19p1,s17p2,s29p1,c29p1);
+    FA fa_210p1(s111p1,c110p1,s18p2,s210p1,c210p1);
+    FA fa_211p1(s112p1,c111p1,s19p2,s211p1,c211p1);
+    FA fa_212p1(s113p1,c112p1,s110p2,s212p1,c212p1);
+    FA fa_213p1(s114p1,c113p1,s111p2,s213p1,c213p1);
+    FA fa_214p1(s115p1,c114p1,s112p2,s214p1,c214p1);
+    FA fa_215p1(s116p1,c115p1,s113p2,s215p1,c215p1);
+    FA fa_216p1(c116p1,PP[2][15],s114p2,s216p1,c216p1);
+    
+    HA ha_21p2(PP[6][0],c12p2, s21p2, c21p2);
+    HA ha_22p2(s11p3,c13p2, s22p2, c22p2);
+    FA fa_23p2(s12p3,c14p2,c11p3, s23p2, c23p2);
+    FA fa_24p2(s13p3,c15p2,c12p3, s24p2, c24p2);
+    FA fa_25p2(s14p3,c16p2,c13p3, s25p2, c25p2);
+    FA fa_26p2(s15p3,c17p2,c14p3, s26p2, c26p2);
+    FA fa_27p2(s16p3,c18p2,c15p3, s27p2, c27p2);
+    FA fa_28p2(s17p3,c19p2,c16p3, s28p2, c28p2);
+    FA fa_29p2(s18p3,c110p2,c17p3, s29p2, c29p2);
+    FA fa_210p2(s19p3,c111p2,c18p3, s210p2, c210p2);
+    FA fa_211p2(s110p3,c112p2,c19p3, s211p2, c211p2);
+    FA fa_212p2(s111p3,c113p2,c110p3, s212p2, c212p2);
+    FA fa_213p2(s112p3,c114p2,c111p3, s213p2, c213p2);
+    FA fa_214p2(s113p3,c115p2,c112p3, s214p2, c214p2);
+    FA fa_215p2(s114p3,PP[5][15],c113p3, s215p2, c215p2);
+    HA ha_216p2(s115p3,c114p3, s216p2, c216p2);
+    HA ha_217p2(s116p3,c115p3, s217p2, c217p2);
+    HA ha_218p2(c116p3,PP[8][15], s218p2, c218p2);
+    
+    HA ha_21p3(s12p4,c11p4, s21p3, c21p3);
+    FA fa_22p3(s13p4,c12p4,PP[12][0], s22p3, c22p3);
+    FA fa_23p3(s14p4,c13p4,s11p5, s23p3, c23p3);
+    FA fa_24p3(s15p4,c14p4,s12p5, s24p3, c24p3);
+    FA fa_25p3(s16p4,c15p4,s13p5, s25p3, c25p3);
+    FA fa_26p3(s17p4,c16p4,s14p5, s26p3, c26p3);
+    FA fa_27p3(s18p4,c17p4,s15p5, s27p3, c27p3);
+    FA fa_28p3(s19p4,c18p4,s16p5, s28p3, c28p3);
+    FA fa_29p3(s110p4,c19p4,s17p5, s29p3, c29p3);
+    FA fa_210p3(s111p4,c110p4,s18p5, s210p3, c210p3);
+    FA fa_211p3(s112p4,c111p4,s19p5, s211p3, c211p3);
+    FA fa_212p3(s113p4,c112p4,s110p5, s212p3, c212p3);
+    FA fa_213p3(s114p4,c113p4,s111p5, s213p3, c213p3);
+    FA fa_214p3(s115p4,c114p4,s112p5, s214p3, c214p3);
+    FA fa_215p3(s116p4,c115p4,s113p5, s215p3, c215p3);
+    FA fa_216p3(c116p4,PP[11][15],s114p5, s216p3, c216p3);
+    
+    //stage 3
+    HA ha_31p1(s22p1,c21p1, s31p1, c31p1);
+    HA ha_32p1(s23p1,c22p1, s32p1, c32p1);
+    FA fa_33p1(s24p1,c23p1,c11p2, s33p1, c33p1);
+    FA fa_34p1(s25p1,c24p1,s21p2, s34p1, c34p1);
+    FA fa_35p1(s26p1,c25p1,s22p2, s35p1, c35p1);
+    FA fa_36p1(s27p1,c26p1,s23p2, s36p1, c36p1);
+    FA fa_37p1(s28p1,c27p1,s24p2, s37p1, c37p1);
+    FA fa_38p1(s29p1,c28p1,s25p2, s38p1, c38p1);
+    FA fa_39p1(s210p1,c29p1,s26p2, s39p1, c39p1);
+    FA fa_310p1(s211p1,c210p1,s27p2, s310p1, c310p1);
+    FA fa_311p1(s212p1,c211p1,s28p2, s311p1, c311p1);
+    FA fa_312p1(s213p1,c212p1,s29p2, s312p1, c312p1);
+    FA fa_313p1(s214p1,c213p1,s210p2, s313p1, c313p1);
+    FA fa_314p1(s215p1,c214p1,s211p2, s314p1, c314p1);
+    FA fa_315p1(s216p1,c215p1,s212p2, s315p1, c315p1);
+    FA fa_316p1(c216p1,s115p2,s213p2, s316p1, c316p1);
+    HA ha_317p1(s116p2,s214p2, s317p1, c317p1);
+    HA ha_318p1(c116p2,s215p2, s318p1, c318p1);
+    
+    HA ha_31p2(c23p2,PP[9][0], s31p2, c31p2);
+    HA ha_32p2(c24p2,s11p4, s32p2, c32p2);
+    HA ha_33p2(c25p2,s21p3, s33p2, c33p2);
+    FA fa_34p2(c26p2,s22p3,c21p3, s34p2, c34p2);
+    FA fa_35p2(c27p2,s23p3,c22p3, s35p2, c35p2);
+    FA fa_36p2(c28p2,s24p3,c23p3, s36p2, c36p2);
+    FA fa_37p2(c29p2,s25p3,c24p3, s37p2, c37p2);
+    FA fa_38p2(c210p2,s26p3,c25p3, s38p2, c38p2);
+    FA fa_39p2(c211p2,s27p3,c26p3, s39p2, c39p2);
+    FA fa_310p2(c212p2,s28p3,c27p3, s310p2, c310p2);
+    FA fa_311p2(c213p2,s29p3,c28p3, s311p2, c311p2);
+    FA fa_312p2(c214p2,s210p3,c29p3, s312p2, c312p2);
+    FA fa_313p2(c215p2,s211p3,c210p3, s313p2, c313p2);
+    FA fa_314p2(c216p2,s212p3,c211p3, s314p2, c314p2);
+    FA fa_315p2(c217p2,s213p3,c212p3, s315p2, c315p2);
+    FA ha_316p2(c218p2,s214p3,c213p3, s316p2, c316p2);
+    HA ha_317p2(s215p3,c214p3, s317p2, c317p2);
+    HA ha_318p2(s216p3,c215p3, s318p2, c318p2);
+    HA ha_319p2(c216p3,s115p5, s319p2, c319p2);
+    
+    //stage 4
+    HA ha_41p1(s32p1,c31p1, s41p1, c41p1);
+    HA ha_42p1(s33p1,c32p1, s42p1, c42p1);
+    HA ha_43p1(s34p1,c33p1, s43p1, c43p1);
+    FA fa_44p1(s35p1,c34p1,c21p2, s44p1, c44p1);
+    FA fa_45p1(s36p1,c35p1,c22p2, s45p1, c45p1);
+    FA fa_46p1(s37p1,c36p1,s31p2, s46p1, c46p1);
+    FA fa_47p1(s38p1,c37p1,s32p2, s47p1, c47p1);
+    FA fa_48p1(s39p1,c38p1,s33p2, s48p1, c48p1);
+    FA fa_49p1(s310p1,c39p1,s34p2, s49p1, c49p1);
+    FA fa_410p1(s311p1,c310p1,s35p2, s410p1, c410p1);
+    FA fa_411p1(s312p1,c311p1,s36p2, s411p1, c411p1);
+    FA fa_412p1(s313p1,c312p1,s37p2, s412p1, c412p1);
+    FA fa_413p1(s314p1,c313p1,s38p2, s413p1, c413p1);
+    FA fa_414p1(s315p1,c314p1,s39p2, s414p1, c414p1);
+    FA fa_415p1(s316p1,c315p1,s310p2, s415p1, c415p1);
+    FA fa_416p1(s317p1,c316p1,s311p2, s416p1, c416p1);
+    FA fa_417p1(s318p1,c317p1,s312p2, s417p1, c417p1);
+    FA fa_418p1(s216p2,c318p1,s313p2, s418p1, c418p1);
+    HA ha_419p1(s217p2,s314p2, s419p1, c419p1);
+    HA ha_420p1(s218p2,s315p2, s420p1, c420p1);
+    
+    HA ha_41p2(c35p2,c11p5, s41p2, c41p2);
+    FA fa_42p2(c36p2,c12p5,PP[15][0], s42p2, c42p2);
+    FA fa_43p2(c37p2,c13p5,PP[15][1], s43p2, c43p2);
+    FA fa_44p2(c38p2,c14p5,PP[15][2], s44p2, c44p2);
+    FA fa_45p2(c39p2,c15p5,PP[15][3], s45p2, c45p2);
+    FA fa_46p2(c310p2,c16p5,PP[15][4], s46p2, c46p2);
+    FA fa_47p2(c311p2,c17p5,PP[15][5], s47p2, c47p2);
+    FA fa_48p2(c312p2,c18p5,PP[15][6], s48p2, c48p2);
+    FA fa_49p2(c313p2,c19p5,PP[15][7], s49p2, c49p2);
+    FA fa_410p2(c314p2,c110p5,PP[15][8], s410p2, c410p2);
+    FA fa_411p2(c315p2,c111p5,PP[15][9], s411p2, c411p2);
+    FA fa_412p2(c316p2,c112p5,PP[15][10], s412p2, c412p2);
+    FA fa_413p2(c317p2,c113p5,PP[15][11], s413p2, c413p2);
+    FA fa_414p2(c318p2,c114p5,PP[15][12], s414p2, c414p2);
+    FA fa_415p2(c319p2,c115p5,PP[15][13], s415p2, c415p2);
+    FA fa_416p2(c116p5,PP[14][15],PP[15][14], s416p2, c416p2);
+    
+    //stage 5
+    HA ha_51p1(s42p1,c41p1, s51p1, c51p1);
+    HA ha_52p1(s43p1,c42p1, s52p1, c52p1);
+    HA ha_53p1(s44p1,c43p1, s53p1, c53p1);
+    HA ha_54p1(s45p1,c44p1, s54p1, c54p1);
+    HA ha_55p1(s46p1,c45p1, s55p1, c55p1);
+    FA fa_56p1(s47p1,c46p1,c31p2, s56p1, c56p1);
+    FA fa_57p1(s48p1,c47p1,c32p2, s57p1, c57p1);
+    FA fa_58p1(s49p1,c48p1,c33p2, s58p1, c58p1);
+    FA fa_59p1(s410p1,c49p1,c34p2, s59p1, c59p1);
+    FA fa_510p1(s411p1,c410p1,s41p2, s510p1, c510p1);
+    FA fa_511p1(s412p1,c411p1,s42p2, s511p1, c511p1);
+    FA fa_512p1(s413p1,c412p1,s43p2, s512p1, c512p1);
+    FA fa_513p1(s414p1,c413p1,s44p2, s513p1, c513p1);
+    FA fa_514p1(s415p1,c414p1,s45p2, s514p1, c514p1);
+    FA fa_515p1(s416p1,c415p1,s46p2, s515p1, c515p1);
+    FA fa_516p1(s417p1,c416p1,s47p2, s516p1, c516p1);
+    FA fa_517p1(s418p1,c417p1,s48p2, s517p1, c517p1);
+    FA fa_518p1(s419p1,c418p1,s49p2, s518p1, c518p1);
+    FA fa_519p1(s420p1,c419p1,s410p2, s519p1, c519p1);
+    FA fa_520p1(c420p1,s316p2,s411p2, s520p1, c520p1);
+    HA ha_521p1(s317p2,s412p2, s521p1, c521p1);
+    HA ha_522p1(s318p2,s413p2, s522p1, c522p1);
+    HA ha_523p1(s319p2,s414p2, s523p1, c523p1);
+    HA ha_524p1(s116p5,s415p2, s524p1, c524p1);
+    
+    //stage 6  
+    HA ha_625p1(		c416p2	,PP[15][15]	, s625p1	, c625p1);
+    FA fa_624p1(    c524p1,    s416p2    ,c415p2    , s624p1    , c624p1);
+    FA fa_623p1(    s524p1,    c523p1    ,c414p2    , s623p1    , c623p1);
+    FA fa_622p1(    s523p1,    c522p1    ,c413p2    , s622p1    , c622p1);
+    FA fa_621p1(    s522p1,    c521p1    ,c412p2    , s621p1    , c621p1);
+    FA fa_620p1(    s521p1,    c520p1    ,c411p2    , s620p1    , c620p1);
+    FA fa_619p1(    s520p1,    c519p1    ,c410p2    , s619p1    , c619p1);
+    FA fa_618p1(    s519p1,    c518p1    ,c49p2    , s618p1    , c618p1);
+    FA fa_617p1(    s518p1,    c517p1    ,c48p2    , s617p1    , c617p1);
+    FA fa_616p1(    s517p1,    c516p1    ,c47p2    , s616p1    , c616p1);
+    FA fa_615p1(    s516p1,    c515p1    ,c46p2    , s615p1    , c615p1);
+    FA fa_614p1(    s515p1,    c514p1    ,c45p2    , s614p1    , c614p1);
+    FA fa_613p1(    s514p1,    c513p1    ,c44p2    , s613p1    , c613p1);
+    FA fa_612p1(    s513p1,    c512p1    ,c43p2    , s612p1    , c612p1);
+    FA fa_611p1(    s512p1,    c511p1    ,c42p2    , s611p1    , c611p1);
+    FA fa_610p1(    s511p1,    c510p1    ,c41p2    , s610p1    , c610p1);
+    HA ha_69p1(    s510p1,    c59p1        , s69p1    , c69p1);
+    HA ha_68p1(    s59p1,    c58p1        , s68p1    , c68p1);
+    HA ha_67p1(    s58p1,    c57p1        , s67p1    , c67p1);
+    HA ha_66p1(    s57p1,    c56p1        , s66p1    , c66p1);
+    HA ha_65p1(    s56p1,    c55p1        , s65p1    , c65p1);
+    HA ha_64p1(    s55p1,    c54p1        , s64p1    , c64p1);
+    HA ha_63p1(    s54p1,    c53p1        , s63p1    , c63p1);
+    HA ha_62p1(    s53p1,    c52p1        , s62p1    , c62p1);
+    HA ha_61p1(    s52p1,    c51p1        , s61p1    , c61p1);  
+    
+    //ripple carry  
+    HA ha_725p1(		c625p1,	c724p1,	PRODUCT[31],	);
+    FA fa_724p1(    s625p1,    c624p1,    c723p1,    PRODUCT[30],    c724p1);
+    FA fa_723p1(    s624p1,    c623p1,    c722p1,    PRODUCT[29],    c723p1);
+    FA fa_722p1(    s623p1,    c622p1,    c721p1,    PRODUCT[28],    c722p1);
+    FA fa_721p1(    s622p1,    c621p1,    c720p1,    PRODUCT[27],    c721p1);
+    FA fa_720p1(    s621p1,    c620p1,    c719p1,    PRODUCT[26],    c720p1);
+    FA fa_719p1(    s620p1,    c619p1,    c718p1,    PRODUCT[25],    c719p1);
+    FA fa_718p1(    s619p1,    c618p1,    c717p1,    PRODUCT[24],    c718p1);
+    FA fa_717p1(    s618p1,    c617p1,    c716p1,    PRODUCT[23],    c717p1);
+    FA fa_716p1(    s617p1,    c616p1,    c715p1,    PRODUCT[22],    c716p1);
+    FA fa_715p1(    s616p1,    c615p1,    c714p1,    PRODUCT[21],    c715p1);
+    FA fa_714p1(    s615p1,    c614p1,    c713p1,    PRODUCT[20],    c714p1);
+    FA fa_713p1(    s614p1,    c613p1,    c712p1,    PRODUCT[19],    c713p1);
+    FA fa_712p1(    s613p1,    c612p1,    c711p1,    PRODUCT[18],    c712p1);
+    FA fa_711p1(    s612p1,    c611p1,    c710p1,    PRODUCT[17],    c711p1);
+    FA fa_710p1(    s611p1,    c610p1,    c79p1,    PRODUCT[16],    c710p1);
+    FA fa_79p1(    s610p1,    c69p1,    c78p1,    PRODUCT[15],    c79p1);
+    FA fa_78p1(    s69p1,    c68p1,    c77p1,    PRODUCT[14],    c78p1);
+    FA fa_77p1(    s68p1,    c67p1,    c76p1,    PRODUCT[13],    c77p1);
+    FA fa_76p1(    s67p1,    c66p1,    c75p1,    PRODUCT[12],    c76p1);
+    FA fa_75p1(    s66p1,    c65p1,    c74p1,    PRODUCT[11],    c75p1);
+    FA fa_74p1(    s65p1,    c64p1,    c73p1,    PRODUCT[10],    c74p1); //showing X at sum
+    FA fa_73p1(    s64p1,    c63p1,    c72p1,    PRODUCT[9],    c73p1);
+    FA fa_72p1(    s63p1,    c62p1,    c71p1,    PRODUCT[8],    c72p1);
+    HA ha_71p1(    s62p1,    c61p1,        PRODUCT[7],    c71p1);
+    
+    //LSB assignments
+    assign PRODUCT[0] = PP[0][0];
+    assign PRODUCT[1] = s11p1;
+    assign PRODUCT[2] = s21p1;
+    assign PRODUCT[3] = s31p1;
+    assign PRODUCT[4] = s41p1;
+    assign PRODUCT[5] = s51p1;
+    assign PRODUCT[6] = s61p1;
+endmodule
+
+module HA(
+input A,B,
+output SUM,CARRY
+    );
+    xor x1(SUM,A,B);
+    and a1(CARRY,A,B);
+endmodule
+    
+module FA(
+input A,B,C,
+output SUM,CARRY
+    );
+    xor x1(SUM,A,B,C);
+    or o1(CARRY,(A^B)&C,A&B);
+endmodule
