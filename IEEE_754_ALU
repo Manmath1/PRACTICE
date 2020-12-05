@@ -1,0 +1,83 @@
+module float_ALU(inA,inB,en,func,clock,out,busy);
+  input 	[31:0]	inA, inB;
+  input 			en, clock;
+  input 	[1:0] 	func; //0 for addition, 1,2,3 for sub, mul and div
+  output reg	[31:0] 	out;
+  output reg			busy;
+  logic 	[31:0]	buff_inA,buff_inB; //input buffers
+  logic		[7:0]	exponentA, exponentB, exponentO;
+  logic		[22:0]	mantisaA, mantisaB,mantisaO;
+  logic		[22:0]  temp; //24 bit to accomodate implicit 1
+  logic				signA, signB, signO;
+  int 				shift;
+  logic 			c=0;
+  
+  initial busy <= 0;
+  
+  always @ (posedge clock) begin //input buffer
+    if(en) begin //if enable is high, accept new inputs at clock edge
+      buff_inA <= inA;
+      buff_inB <= inB;
+    end
+    else begin //don't accept inputs
+     buff_inA <= buff_inA;
+     buff_inB <= buff_inB; 
+    end
+  end // sampling the inputs at positive edge of clock
+      
+  always @ (buff_inA, buff_inB) begin //always block to prepare mantisa whenever new inputs detected
+    {signA, exponentA, mantisaA} = buff_inA; 
+    {signB, exponentB, mantisaB} = buff_inB;
+    mantisaA = (mantisaA>>1)|23'b1000000_00000000_00000000;
+    mantisaB = (mantisaB>>1)|23'b1000000_00000000_00000000;
+    shift = (exponentA > exponentB)?(exponentA-exponentB):(exponentB-exponentA);
+    exponentO = (exponentA > exponentB)?exponentA:exponentB;
+    if(exponentA > exponentB) mantisaB = (mantisaB >> shift);
+    else mantisaA = (mantisaA >> shift);
+     //larger of exponent will be in answer
+    busy = 1;
+  end
+  
+  always @ (posedge busy) begin //block to perform additon or subtraction
+      case (func)
+        2'b00:begin//consider case here
+          if(signA ^ signB) begin
+            if(mantisaA > mantisaB) begin
+              {c,mantisaO} <= mantisaA - mantisaB;
+              signO <= signA;
+            end
+            else begin
+              {c,mantisaO} <= mantisaB - mantisaA;
+              signO <= signB;
+            end
+          end
+          else begin
+            signO <= signA;
+            {c,mantisaO} <= mantisaA + mantisaB;
+          end
+        end
+        default: begin end //do nothing, add more functionality later
+      endcase
+  end //end of always
+  always @ (posedge clock) begin //normaliser block
+      if(busy) begin  
+        case ({c,mantisaO[22]})
+            2'b00: begin
+              mantisaO <= mantisaO<<1;
+              exponentO <= exponentO-1;
+            end
+            2'b01: begin
+              mantisaO <= mantisaO<<1;
+              exponentO <= exponentO;
+              busy<=0;
+            end
+            2'b10,11: begin
+              mantisaO <= mantisaO;
+              exponentO <= exponentO;
+              busy<=0;
+            end
+        endcase
+      end //end of if
+    out <= {signO,exponentO,mantisaO};
+  end //end of always
+endmodule : float_ALU
